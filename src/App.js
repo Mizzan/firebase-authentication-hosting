@@ -15,6 +15,8 @@ function App() {
 
   const googleProvider = new firebase.auth.GoogleAuthProvider();
   const fbProvider = new firebase.auth.FacebookAuthProvider();
+  const githubProvider = new firebase.auth.GithubAuthProvider();
+
   const handleGoogleLogIn = () => {
     firebase
       .auth()
@@ -72,11 +74,43 @@ function App() {
       });
   };
 
+  const handleGithubLogIn = () => {
+    firebase
+      .auth()
+      .signInWithPopup(githubProvider)
+      .then((result) => {
+        /** @type {firebase.auth.OAuthCredential} */
+        var credential = result.credential;
+
+        // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+        var token = credential.accessToken;
+
+        // The signed-in user info.
+        var user = result.user;
+        console.log(user);
+        setUser(user);
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // ...
+        console.log(errorCode, errorMessage, email, credential);
+      });
+  };
+
   return (
     <div className="App">
       <button onClick={handleGoogleLogIn}>Sign In with Google</button>
       <br />
       <button onClick={handleFbLogIn}>Sign In With Facebook</button>
+      <br />
+      <button onClick={handleGithubLogIn}>Sign In With Github</button>
       <h1>User Name: {user.name}</h1>
       <h1>Email ID: {user.email}</h1>
       <img src={user.photoURL} alt="" />
